@@ -14,3 +14,4 @@
    # grid_dist: dist        distance between grid points in redefined units   ----> will be used in the numerical integration
    # plot: boolean          if true, plots are automatically generated
    # save_data: boolean     if true, data will be saved to a text file               
+   # direc: string          directory for saving plots and data, if requiered

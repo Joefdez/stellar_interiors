@@ -1,2 +1,2 @@
 import numpy
-import matplotlib.pylab 
+import matplotlib.pyplot

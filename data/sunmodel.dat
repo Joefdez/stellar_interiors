@@ -7,3 +7,6 @@
   # Y ----> helium proportion
   # Z ----> metallicity
   # gamma ----> adiabatic coefficient
+  # mass -----> total mass of the sun (kg)
+  # radius ---> radius of the sum (m)
+  

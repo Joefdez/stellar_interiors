@@ -10,7 +10,24 @@ from data import *
 
 
 
+
+#Read model information
+
 model_name, int_scheme, grid_points, plot, save_data, direc = data.read_stddata(initdata.dat)
+
+#Build numerical grid 
+
+
+
+#Read initial conditions and initialize the problem variables
+
+Mr_0, P_0, L_0, T_0 = data.read_initcond(model_name)
+Mr, P, L, T = Mr_0, P_0, L_0, T_0
+
+#Initialize atomic populations vector
+
+pops0 = #Call to populations script with initial conditions
+pops  = pops0
 
 #Choose integration scheme and setup integration grid
 
@@ -26,17 +43,22 @@ else:
 
 
 
-
-
-#Initialization data
-
-
 #Call solver routines
+
+for step in grid:
+
+	#Calculate populations
+ 	
+	#Integrator algorithm
+
+        #Write to file?
+
+	
 
 
     print "Numerical solution completed"
 
-#Save data in file if requiered
+
 
 #Call plot routines if requiered
 

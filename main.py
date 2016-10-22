@@ -15,7 +15,7 @@ from data import *
 
 model_name, int_scheme, grid_points, plot, save_data, direc = data.read_stddata(initdata.dat)
 
-#Build numerical grid 
+#Build numerical grid
 
 
 
@@ -31,36 +31,18 @@ pops  = pops0
 
 #Choose integration scheme and setup integration grid
 
-if int_scheme == 'RK4'
 
-    integrator =  integrators.RK4
-    grid = array([grid_points])
-
-else:
-
-    return 'Unknow integration scheme'
-
-
-
+yy = array([Mr, P, L, T])       #Unknowns array
+funcs = array([dMr_r, dP_r, dL_r, dT_r])       # RHS functions array
 
 #Call solver routines
 
-for step in grid:
+hh, sgrid, solution = integrationSetup()
 
-	#Calculate populations
- 	
-	#Integrator algorithm
-
-        #Write to file?
-
-	
-
-
-    print "Numerical solution completed"
+solution = solve()
+print "Numerical solution completed"
 
 
 
 #Call plot routines if requiered
-
-
-    print "Plots completed. Check directory. "
+print "Plots completed. Check directory. "

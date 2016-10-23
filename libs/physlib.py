@@ -10,15 +10,20 @@ G   = 6.67408E-11                     # Universal gravitational constant (m^3 kg
 k_b = 1.38064852E-23                  # Boltzmann constant (JK^-1
 adgam = 5./3.                         # Adiabatic coefficient for monoatomic gas
 
-## Ionization energies
+# Ionization energies
 
-Chi_HI     =
-Chi_HeI    =
-Chi_HeII   =
+Chi_HI     = 2.18E-18
+Chi_HeI    = 3.94E-18
+Chi_HeII   = 8.72E-18
 
+# Excitation energies and level degeneracies
 
-
-
+HIe       = [0,2.178E-18]
+HIdeg     = [2,8]
+HeIe      = [0,3.17E-18, 3.30E-18, 3.36E-18, 3.40E-18, 3.64E-18]
+HeIdeg    = [1,3,1,9,3,3]
+HeIIe     = [0, 6.54E-18, 7.75E-18, 8.17E-18, 8.33E-18, 8.48E-18]
+HeIId     = [2, 8, 18, 32, 50 ]
 
 ######     Physical equations and transformations     #######
 
@@ -41,7 +46,7 @@ def saha(T,n_e,U,U_1,Ei):
 def saha_ne(T,U,U_1,Ei):
 
     """
-        Saha equation divided by electron number. Output: relative population of ionization state to previous
+        Saha equation divided by electron number. Output: relative population of ionization state to next
         ionization state and electron number.
 
     """
@@ -69,7 +74,7 @@ def mu_0():
 
 # Ionization
 
-def Eg(T,n_HII, n_HeII, n_HeIII):
+def Eg(T,etaHI, etaHeI, etaHeII):
 
     """
        Ionitzation state. Input: Hydogren and helium fractions, metallicity. Calculates the ionization degree of
@@ -77,7 +82,7 @@ def Eg(T,n_HII, n_HeII, n_HeIII):
     """
 
 
-   ionization_state= mu_0() ( n_HII*X + (n_HeII + n_HeIII) * Y/4. )
+   ionization_state= mu_0() ( etaHI*X + (etaHeI + 2*etaHeII) * Y/4. )
 
    return ionization_state
 
@@ -125,3 +130,11 @@ def is_radiative(rad_grad, conv_grad):
     else:
 
         return conv_grad
+
+
+
+
+def partFun(T,energ, degen):
+    """Calculates canonical partition function of a system, given the energy levels and degeneracies"""
+
+    return sum(degen*e**(-energ/(k_b*T))

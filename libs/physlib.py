@@ -57,7 +57,7 @@ def saha_ne(T,U,U_1,Ei):
 
 # Ideal gas equation
 
-def rho(T,P,mu):
+def dens(T,P,mu):
 
     """
         Ideal gas equation. Input: temperature, pressure, mean molecular mass. Calculates gas density.
@@ -69,7 +69,7 @@ def rho(T,P,mu):
 
 # Mean molecular mass for neutral gas
 
-def mu_0():
+def mu_0(X,Y,Z):
      return 1./(X+Y/4.+Z/2.)
 
 # Ionization
@@ -89,7 +89,7 @@ def Eg(T,etaHI, etaHeI, etaHeII):
 
 # Mean molecular mass for gas with non-zero ionization
 
-def mu(T,n_HII, n_HeII, n_HeIII):
+def mu(T, n_HII, n_HeII, n_HeIII, X, Y, Z):
 
     """
         Calculates the mean moleculare weight for a partially ionized gas.
@@ -100,7 +100,7 @@ def mu(T,n_HII, n_HeII, n_HeIII):
 
     E=Eg(T,n_HII, n_HeII, n_HeIII)
 
-    return mu_0()/(1+E)
+    return mu_0(X,Y,Z)/(1+E)
 
 
 # pp nuclear energy generation rate

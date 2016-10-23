@@ -17,4 +17,7 @@ def read_model_spefic(mod_name):
 
         data=genfromtxt(mod_name,dtype='str')
 
+    else:
+        raise ValueError('Model not specified. Add it :)')
+
     return data

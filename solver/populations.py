@@ -37,7 +37,7 @@ def populations(T, Ne0):
 
             #Fill in the independent term column vector
 
-            indep_terms[0,0], indep_terms[1,0] = X, Y
+            indep_terms[0,0], indep_terms[1,0] = X, Y    # WRONG, RETHINK THIS!!
 
             pops = solve(coeff_matrix, indep_terms)
 

@@ -1,13 +1,15 @@
 # Sun specific data
 
-
+  0.912
+  0.087
+  0.001
+  1.989E30
+  6.957E8
 
 
 
   # X ----> hydrogen proportion
   # Y ----> helium proportion
   # Z ----> metallicity
-  # gamma ----> adiabatic coefficient
   # mass -----> total mass of the sun (kg)
   # radius ---> radius of the sum (m)
-  # electron density guess

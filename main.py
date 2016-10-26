@@ -9,40 +9,27 @@ from solver import *
 from data import *
 
 
+""" Read the model and solution routine information from initdata.dat"""
+model_name, int_scheme, grid_points, plot, save_data, directory = data.read_stddata(initdata.dat)
 
 
-#Read model information
-
-model_name, int_scheme, grid_points, plot, save_data, direc = data.read_stddata(initdata.dat)
-
-#Build numerical grid
+""" Read initial conditions and setup global variables"""
+R_0, Mr_0, P_0, L_0, T_0, rho_0 = data.read_initcond("initcond.dat")   #Read from text file
+R, Mr, P, L, T, rho = R0, Mr_0, P_0, L_0, T_0, rho_0                       #Initialize calculation variables
 
 
-
-#Read initial conditions and initialize the problem variables
-
-Mr_0, P_0, L_0, T_0 = data.read_initcond(model_name)
-Mr, P, L, T = Mr_0, P_0, L_0, T_0
-
-mu0 = mu_0(X,Y,Z)
-rho0 = 
-
-#Initialize atomic populations vector
-
-#pops0 = #Call to populations script with initial conditions
-#pops  = pops0
-
-#Choose integration scheme and setup integration grid
-
-
-yy = array([Mr, P, L, T])       #Unknowns array
+""" Defined arrays for solution: variables and RHS """
+yy = array([Mr, P, L, T])                      #Unknowns array
 funcs = array([dMr_r, dP_r, dL_r, dT_r])       # RHS functions array
 
-#Call solver routines
+
+
+""" Set-up solution grid and solve the system """
 
 hh, sgrid, solution = integrationSetup(int_scheme, grid_points, r_s)
 
 solution = solve(grid_points, sgrid, yy, hh)
+
 print "Numerical solution completed"
 
 

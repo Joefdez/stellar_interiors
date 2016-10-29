@@ -8,7 +8,12 @@
    True
    True
    'plots/sun_model'
-
+   'out->in'
+   6.957E8
+   1.989E30
+   0.
+   3.826E26
+   5772.
 
 
 
@@ -23,3 +28,4 @@
    # plot: boolean          if true, plots are automatically generated
    # save_data: boolean     if true, data will be saved to a text file
    # direc: string          directory for saving plots and data, if requiered
+   #Integration direction

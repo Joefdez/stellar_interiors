@@ -1,13 +1,15 @@
-import libraries
+#!/usr/bin/python
+from numpy import *
 
 #####      Physical constants in SI units  #####
 
-R   = 8.3144598                       # Gas constant (J K^-1 mol^-1)
-N_a = 6.02214086E23                   # Avogradro's number
-sig = 5.670373E-8                     # Stefan-Boltzmann constant (J m^-2 s^-2 K^-4
-m_H = 1.67372E-27                     # Hydrogen mass (kg)
-G   = 6.67408E-11                     # Universal gravitational constant (m^3 kg^-1 s^-2=
-k_b = 1.38064852E-23                  # Boltzmann constant (JK^-1
+R     = 8.3144598                       # Gas constant (J K^-1 mol^-1)
+N_a   = 6.02214086E23                   # Avogradro's number
+sig   = 5.670373E-8                     # Stefan-Boltzmann constant (J m^-2 s^-2 K^-4
+m_H   = 1.67372E-27                     # Hydrogen mass (kg)
+m_He  = 6.64647E-27
+G     = 6.67408E-11                     # Universal gravitational constant (m^3 kg^-1 s^-2=
+k_b   = 1.38064852E-23                  # Boltzmann constant (JK^-1
 adgam = 5./3.                         # Adiabatic coefficient for monoatomic gas
 
 # Ionization energies
@@ -57,7 +59,7 @@ def saha_ne(T,U,U_1,Ei):
 
 # Ideal gas equation
 
-def dens(T,P,mu):
+def dens(T, P, mu):
 
     """
         Ideal gas equation. Input: temperature, pressure, mean molecular mass. Calculates gas density.
@@ -69,47 +71,45 @@ def dens(T,P,mu):
 
 # Mean molecular mass for neutral gas
 
-def mu_0(X,Y,Z):
-     return 1./(X+Y/4.+Z/2.)
+def mu_0(X, Y, Z):
+    return 1./(X+Y/4.+Z/2.)
 
 # Ionization
 
-def Eg(T,etaHI, etaHeI, etaHeII):
+def Eg(T, etaHI, etaHeI, etaHeII, mu_s, X, Y):
 
     """
        Ionitzation state. Input: Hydogren and helium fractions, metallicity. Calculates the ionization degree of
        the gas.
     """
+    ionization_state = mu_s*  ( etaHI * X + (etaHeI + 2*etaHeII) * Y/4. )
 
-
-   ionization_state= mu_0() ( etaHI*X + (etaHeI + 2*etaHeII) * Y/4. )
-
-   return ionization_state
+    return ionization_state
 
 
 # Mean molecular mass for gas with non-zero ionization
 
-def mu(T, n_HII, n_HeII, n_HeIII, X, Y, Z):
+def mu(T, pops, mu_s, X, Y, Z):
 
     """
         Calculates the mean moleculare weight for a partially ionized gas.
-
     """
+    etaHI = pops[1]/(pops[0]+pops[1])
+    etaHeI = pops[3]/(pops[2]+pops[3]+pops[4])
+    etaHeII = pops[4]/(pops[2]+pops[3]+pops[4])
 
+    E = Eg(T, etaHI, etaHeI, etaHeII, mu_s)
 
-
-    E=Eg(T,n_HII, n_HeII, n_HeIII)
-
-    return mu_0(X,Y,Z)/(1+E)
+    return mu_0(X, Y, Z)/(1+E)
 
 
 # pp nuclear energy generation rate
 
-def e_pp(T,rho):
+def e_pp(T, rho, X):
 
     T9 = T/(10E9)                  # Temperature in units of 10^9 K
 
-    return 2.53E4 * rho * X**2 * T9**(2./3.) * exp(-3.37 * T9**(-1./3.) )
+    return 2.53E4 * rho * X**2 *T9**(2./3.)*exp(-3.37 * T9**(-1./3.))
 
 # Convective transport / Radiative transport criteria
 
@@ -118,23 +118,16 @@ def is_radiative(rad_grad, conv_grad):
     """
         Returns true if the system is stable against Convection, that is, if radiative transport
         dominates. Returns false if convective transport dominates.
-
     """
 
     response = conv_grad>rad_grad
-
     if response:
-
         return rad_grad
-
     else:
-
         return conv_grad
-
-
 
 
 def partFun(T,energ, degen):
     """Calculates canonical partition function of a system, given the energy levels and degeneracies"""
 
-    return sum(degen*e**(-energ/(k_b*T))
+    return sum(degen * exp(-energ/(k_b*T)))

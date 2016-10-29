@@ -76,22 +76,20 @@ def mu_0(X, Y, Z):
 
 # Ionization
 
-def Eg(T, etaHI, etaHeI, etaHeII):
+def Eg(T, etaHI, etaHeI, etaHeII, mu_s, X, Y):
 
     """
        Ionitzation state. Input: Hydogren and helium fractions, metallicity. Calculates the ionization degree of
        the gas.
     """
-
-
-    ionization_state = mu_0() ( etaHI*X + (etaHeI + 2*etaHeII)*Y/4. )
+    ionization_state = mu_s*  ( etaHI * X + (etaHeI + 2*etaHeII) * Y/4. )
 
     return ionization_state
 
 
 # Mean molecular mass for gas with non-zero ionization
 
-def mu(T, pops):
+def mu(T, pops, mu_s, X, Y, Z):
 
     """
         Calculates the mean moleculare weight for a partially ionized gas.
@@ -100,18 +98,18 @@ def mu(T, pops):
     etaHeI = pops[3]/(pops[2]+pops[3]+pops[4])
     etaHeII = pops[4]/(pops[2]+pops[3]+pops[4])
 
-    E=Eg(T, etaHI, etaHeI, etaHeII)
+    E = Eg(T, etaHI, etaHeI, etaHeII, mu_s)
 
     return mu_0(X, Y, Z)/(1+E)
 
 
 # pp nuclear energy generation rate
 
-def e_pp(T, rho):
+def e_pp(T, rho, X):
 
     T9 = T/(10E9)                  # Temperature in units of 10^9 K
 
-    return 2.53E4 * rho*X**2 *T9**(2./3.)*exp(-3.37 * T9**(-1./3.) )
+    return 2.53E4 * rho * X**2 *T9**(2./3.)*exp(-3.37 * T9**(-1./3.))
 
 # Convective transport / Radiative transport criteria
 
@@ -132,4 +130,4 @@ def is_radiative(rad_grad, conv_grad):
 def partFun(T,energ, degen):
     """Calculates canonical partition function of a system, given the energy levels and degeneracies"""
 
-    return sum(degen*e**(-energ/(k_b*T)))
+    return sum(degen * exp(-energ/(k_b*T)))

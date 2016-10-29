@@ -22,13 +22,8 @@ def read_model_spefic(mod_name):   #Read model speficif information
     else:
         raise ValueError('Model not specified. Add it :)')
 
-    return data
+    return data[0], data[1], data[2], data[3], data[4]
 
-def read_kappar(tfile):            # Read in opacity table
-
-    data=genfromtxt(tfile)
-
-    return data
 
 def read_initcond(tfile):          # Read initial conditions into memory
 

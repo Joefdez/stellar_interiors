@@ -1,5 +1,7 @@
 #!/usr/bin/python
-from numpy import array, exp
+from numpy import array, exp, log
+from bisect import *
+from scipy.interplate import interp2d
 
 #####      Physical constants in SI units  #####
 
@@ -25,7 +27,7 @@ HIdeg     = [2,8]
 HeIe      = [0,3.17E-18, 3.30E-18, 3.36E-18, 3.40E-18, 3.64E-18]
 HeIdeg    = [1,3,1,9,3,3]
 HeIIe     = [0, 6.54E-18, 7.75E-18, 8.17E-18, 8.33E-18, 8.48E-18]
-HeIId     = [2, 8, 18, 32, 50 ]
+HeIIdeg     = [2, 8, 18, 32, 50 ]
 
 ######     Physical equations and transformations     #######
 
@@ -91,7 +93,6 @@ def mu(T, pops, X, Y, Z):
     """
         Calculates the mean moleculare weight for a partially ionized gas.
     """
-    mu_s = mu_0(X, Y, Z)
     E = Eg(T, pops, X, Y, Z)
 
     return mu_0(X, Y, Z)/(1+E)
@@ -125,3 +126,17 @@ def partFunc(T,energ, degen):
     """Calculates canonical partition function of a system, given the energy levels and degeneracies"""
 
     return sum(degen * exp(-energ/(k_b*T)))
+
+def rossOpacity(T, P, mu):
+    T6 = T/(10E6)
+    lD = log(dens(T, P, mu)/T6)
+    lT = log(T)
+
+    lowerT, lowerD = bisect_left(lT, opTab[:,0]), bisect_left(lD, opTab[0,:])
+    upperT, upperD = bisect_right(lT, opTab[:,0]), bisect_right(lD, opTab[0,:])
+    kappa1, kappa2 = opTab[lowerT,lowerD], opTab[upperT,upperD]
+
+    fit = interp2d([lowerT, upperT], [lowerD, upperD], [kappa1, kappa2], kind='linear')
+    val = fit(lT, lD)
+
+    return val

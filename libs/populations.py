@@ -7,7 +7,7 @@ from physlib import *
 
 
 
-def pop_iter(T,rho, Ne0, X, Y):
+def pop_iter(T, rho, X, Y, Ne0):
     """
         Iterative calculation of the species populations with inital guess of electron number density
         Takes temperature and initial electron number density guess as input.
@@ -60,7 +60,7 @@ def pop_iter(T,rho, Ne0, X, Y):
 
 
 
-def pop_TI(T, rho, P, X, Y):
+def pop_TI(T, rho, X, Y, Ne):
 
     """
     Calculation of the ionic populations under the assumption that the plasma is totally ionized. Under this assumption,
@@ -73,7 +73,6 @@ def pop_TI(T, rho, P, X, Y):
     UHeII  = partFunc(T, HeIIe, HeIIdeg)
     UHeIII = 1
 
-    Ne = nn(T, P)/2.
 
     pops=array([1,5])                                            #Results vector
     coeff_matrix, indep_terms = zeros([5,5]), zeros([5,1])       #Equation coefficients matrix and independent terms vector

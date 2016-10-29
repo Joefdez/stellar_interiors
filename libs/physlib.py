@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from numpy import *
+from numpy import array, exp
 
 #####      Physical constants in SI units  #####
 
@@ -45,18 +45,6 @@ def saha(T,n_e,U,U_1,Ei):
     return n_e*phi                                     #Calculate population of ionization state.
 
 
-def saha_ne(T,U,U_1,Ei):
-
-    """
-        Saha equation divided by electron number. Output: relative population of ionization state to next
-        ionization state and electron number.
-
-    """
-
-    phi=2.07E-16*(U/U_1)*T**(-3/2)*exp(Ei/(k_b*T))
-
-    return phi
-
 # Ideal gas equation
 
 def dens(T, P, mu):
@@ -67,6 +55,13 @@ def dens(T, P, mu):
     """
     return (mu*P)/(R*T)
 
+def nn(T, P):
+
+    """
+       Ideal gas equation in terms of the number density. Input: temperature and pressure
+    """
+
+    return P/(k_b * T)
 
 
 # Mean molecular mass for neutral gas
@@ -76,29 +71,28 @@ def mu_0(X, Y, Z):
 
 # Ionization
 
-def Eg(T, etaHI, etaHeI, etaHeII, mu_s, X, Y):
+def Eg(T, pops, X, Y, Z):
 
     """
        Ionitzation state. Input: Hydogren and helium fractions, metallicity. Calculates the ionization degree of
        the gas.
     """
-    ionization_state = mu_s*  ( etaHI * X + (etaHeI + 2*etaHeII) * Y/4. )
+    etaHI = pops[1]/(pops[0]+pops[1])
+    etaHeI = pops[3]/(pops[2]+pops[3]+pops[4])
+    etaHeII = pops[4]/(pops[2]+pops[3]+pops[4])
+    ionization_state = mu_0(X, Y, Z)*  ( etaHI * X + (etaHeI + 2*etaHeII) * Y/4. )
 
     return ionization_state
 
 
 # Mean molecular mass for gas with non-zero ionization
 
-def mu(T, pops, mu_s, X, Y, Z):
-
+def mu(T, pops, X, Y, Z):
     """
         Calculates the mean moleculare weight for a partially ionized gas.
     """
-    etaHI = pops[1]/(pops[0]+pops[1])
-    etaHeI = pops[3]/(pops[2]+pops[3]+pops[4])
-    etaHeII = pops[4]/(pops[2]+pops[3]+pops[4])
-
-    E = Eg(T, etaHI, etaHeI, etaHeII, mu_s)
+    mu_s = mu_0(X, Y, Z)
+    E = Eg(T, pops, X, Y, Z)
 
     return mu_0(X, Y, Z)/(1+E)
 
@@ -127,7 +121,7 @@ def is_radiative(rad_grad, conv_grad):
         return conv_grad
 
 
-def partFun(T,energ, degen):
+def partFunc(T,energ, degen):
     """Calculates canonical partition function of a system, given the energy levels and degeneracies"""
 
     return sum(degen * exp(-energ/(k_b*T)))

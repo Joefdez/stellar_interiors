@@ -22,9 +22,7 @@ def dP_r(r, Mr, rho):
 
 def dL_r(r, T, rho):
     """ RHS of DE for luminosity  """
-    T9 = T/(10E9)
-
-    return  4. * pi * rho**2 * r**2 * X**2 * 2.53E4 * T9**(-2./3.) * exp(-3.37* (T9)**(1./3.))
+    return  4. * pi * rho * r**2 *  e_pp(T, rho)
 
 #Temperature gradient : needs to decide whether convective or radiative transport apply.
 
@@ -42,9 +40,9 @@ def conv_grad(r, T, Mr):
 
 
 
-def dT_r(r, Mr, T, L):
+def dT_r(r, Mr, T, L, rho):
     """ Decide which transport mechanism dominates and apply the corresponding RHS """
-    radGrad  = rad_grad(r, T, L, kr)
+    radGrad = rad_grad(r, T, L, rho)
     convGrad = conv_grad(r,T, Mr)
 
     grad = is_radiative(radGrad, convGrad)
@@ -53,7 +51,7 @@ def dT_r(r, Mr, T, L):
 
 
 
-def calc_rhs(r, Mr, P, L, T, mu, kr):
+def calc_rhs(r, Mr, P, L, T, mu):
 
-    rho = dens(T, P, mu) 
-    return rho, dMr_r(r, rho), dP_r(r, Mr, rho), dL_r(r, T, rho), dT_r(r, Mr, T, L)
+    rho = dens(T, P, mu)
+    return rho, dMr_r(r, rho), dP_r(r, Mr, rho), dL_r(r, T, rho), dT_r(r, Mr, T, L, rho)

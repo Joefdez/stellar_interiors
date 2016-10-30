@@ -34,6 +34,7 @@ def solve(grid_points, sgrid, hh, type="ti"):
 
             pops = calc_pops(r, Mr, P, L, T, rho, X, Y, ne=0)
             mu_Now = mu(T, pops, X, Y, Z)
+            k_r = rossOpacity(T, P, rho)
             next_step = RK4()
             rho = dens(next_step[3] ,next_step[1] ,muNow)
             solution[jj] = append(next_step, array([rho]))

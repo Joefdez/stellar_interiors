@@ -27,23 +27,21 @@ def dL_r(r, T, rho, X):
 
 #Temperature gradient : needs to decide whether convective or radiative transport apply.
 
-def rad_grad(r, T, L, rho):
+def rad_grad(r, T, L, rho, k_r):
     """ RHS of DE for teperature if radiative transport dominates"""
-
-    k_r = rossOpacity(T, P, mu)
 
     return (3 * k_r * L * rho)/(64. * pi * sig) * 1./(r**2 * T**3)
 
-def conv_grad(r, T, Mr, pops, X, Y, Z):
+def conv_grad(r, T, Mr,muN):
     """ RHS of DE for temperature if the system is unstable against convective transport """
     g= Mr*G/(r**2)
-    return  (-1.) * mu(T, pops, X, Y, Z)/R * (adgam-1.)/adgam * g
+    return  (-1.) * muN/R * (adgam-1.)/adgam * g
 
 
-def dT_r(r, Mr, T, L, rho):
+def dT_r(r, Mr, T, L, rho, muN):
     """ Decide which transport mechanism dominates and apply the corresponding RHS """
     radGrad = rad_grad(r, T, L, rho)
-    convGrad = conv_grad(r, T, Mr)
+    convGrad = conv_grad(r, T, Mr, muN)
 
     grad = is_radiative(radGrad, convGrad)
 

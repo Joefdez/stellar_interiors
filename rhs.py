@@ -13,6 +13,5 @@ def calc_pops(r, Mr, P, L, T, rho, X, Y, type="ti", ne0=0):
     return pops
 
 def calc_rhs(r, Mr, P, L, T, X, Y, mu):
-
     rho = dens(T, P, mu)
-    return array([dMr_r(r, rho), dP_r(r, Mr, rho), dL_r(r, T, rho), dT_r(r, Mr, T, L, rho)])
+    return array([dMr_r(r, rho), dP_r(r, Mr, rho), dL_r(r, T, rho), dT_r(r, Mr, T, L, rho,mu)])

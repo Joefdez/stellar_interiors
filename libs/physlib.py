@@ -1,32 +1,32 @@
 #!/usr/bin/python
 from numpy import array, exp, log
 from bisect import *
-from scipy.interplate import interp2d
+from scipy.interpolate import interp2d
 
-#####      Physical constants in SI units  #####
+#####      Physical constants in cgs units  #####
 
-R     = 8.3144598                       # Gas constant (J K^-1 mol^-1)
+R     = 8.3144598E7                     # Gas constant (erg K^-1 mol^-1)
 N_a   = 6.02214086E23                   # Avogradro's number
-sig   = 5.670373E-8                     # Stefan-Boltzmann constant (J m^-2 s^-2 K^-4
-m_H   = 1.67372E-27                     # Hydrogen mass (kg)
-m_He  = 6.64647E-27
-G     = 6.67408E-11                     # Universal gravitational constant (m^3 kg^-1 s^-2=
-k_b   = 1.38064852E-23                  # Boltzmann constant (JK^-1
-adgam = 5./3.                         # Adiabatic coefficient for monoatomic gas
+sig   = 5.670373E-5                     # Stefan-Boltzmann constant (erg cm^-2 s^-1 K^-4
+m_H   = 1.67372E-30                     # Hydrogen mass (g)
+m_He  = 6.64647E-30                     # Helium mass (g)
+G     = 6.67428E-8                      # Universal gravitational constant (cm^3 g^-1 s^-2=
+k_b   = 1.38064852E-16                  # Boltzmann constant (JK^-1
+adgam = 5./3.                           # Adiabatic coefficient for monoatomic gas
 
 # Ionization energies
 
-Chi_HI     = 2.18E-18
-Chi_HeI    = 3.94E-18
-Chi_HeII   = 8.72E-18
+Chi_HI     = 2.18E-11
+Chi_HeI    = 3.94E-11
+Chi_HeII   = 8.72E-11
 
 # Excitation energies and level degeneracies
 
-HIe       = [0,2.178E-18]
+HIe       = [0,2.178E-11]
 HIdeg     = [2,8]
-HeIe      = [0,3.17E-18, 3.30E-18, 3.36E-18, 3.40E-18, 3.64E-18]
+HeIe      = [0,3.17E-11, 3.30E-11, 3.36E-11, 3.40E-11, 3.64E-11]
 HeIdeg    = [1,3,1,9,3,3]
-HeIIe     = [0, 6.54E-18, 7.75E-18, 8.17E-18, 8.33E-18, 8.48E-18]
+HeIIe     = [0, 6.54E-11, 7.75E-11, 8.17E-11, 8.33E-11, 8.48E-11]
 HeIIdeg     = [2, 8, 18, 32, 50 ]
 
 ######     Physical equations and transformations     #######
@@ -127,14 +127,14 @@ def partFunc(T,energ, degen):
 
     return sum(degen * exp(-energ/(k_b*T)))
 
-def rossOpacity(T, P, mu):
+def rossOpacity(T, rho, mu):
     T6 = T/(10E6)
-    lD = log(dens(T, P, mu)/T6)
+    lD = log(rho/T6)
     lT = log(T)
 
-    lowerT, lowerD = bisect_left(lT, opTab[:,0]), bisect_left(lD, opTab[0,:])
-    upperT, upperD = bisect_right(lT, opTab[:,0]), bisect_right(lD, opTab[0,:])
-    kappa1, kappa2 = opTab[lowerT,lowerD], opTab[upperT,upperD]
+    lowerT, lowerD = bisect_left(lT, opTab[:, 0]), bisect_left(lD, opTab[0, :])
+    upperT, upperD = bisect_right(lT, opTab[:, 0]), bisect_right(lD, opTab[0, :])
+    kappa1, kappa2 = opTab[lowerT, lowerD], opTab[upperT,upperD]
 
     fit = interp2d([lowerT, upperT], [lowerD, upperD], [kappa1, kappa2], kind='linear')
     val = fit(lT, lD)

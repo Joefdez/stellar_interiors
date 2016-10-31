@@ -7,6 +7,7 @@ from physlib import *
 
 
 
+
 def pop_iter(T, rho, X, Y, Ne0):
     """
         Iterative calculation of the species populations with inital guess of electron number density
@@ -18,7 +19,7 @@ def pop_iter(T, rho, X, Y, Ne0):
 
     UHI    = partFunc(T, HIe, HIdeg )
     UHII   = 1
-    UHeI   = partFunc(T, HeIe, HIdeg)
+    UHeI   = partFunc(T, HeIe, HeIdeg)
     UHeII  = partFunc(T, HeIIe, HeIIdeg)
     UHeIII = 1
 
@@ -69,18 +70,18 @@ def pop_TI(T, rho, X, Y, Ne):
 
     UHI    = partFunc(T, HIe, HIdeg )
     UHII   = 1
-    UHeI   = partFunc(T, HeIe, HIdeg)
+    UHeI   = partFunc(T, HeIe, HeIdeg)
     UHeII  = partFunc(T, HeIIe, HeIIdeg)
     UHeIII = 1
 
 
-    pops=array([1,5])                                            #Results vector
+    pops=array([5,1])                                            #Results vector
     coeff_matrix, indep_terms = zeros([5,5]), zeros([5,1])       #Equation coefficients matrix and independent terms vector
 
     indep_terms[0, 0], indep_terms[1, 0] = rho * X / m_H, rho * Y/ m_He
 
     coeff_matrix[0, 0], coeff_matrix[0, 1] = 1, 1                # Fill in coefficients matrix
-    coeff_matrix[1, 2], coeff_matrix[1, 3], coeff_matrix[2, 5] = 1, 1, 1
+    coeff_matrix[1, 2], coeff_matrix[1, 3], coeff_matrix[2, 4] = 1, 1, 1
     coeff_matrix[2, 0], coeff_matrix[2, 1] = 1, (-1) * saha(T, Ne, UHI, UHII, Chi_HI )
     coeff_matrix[3, 2], coeff_matrix[3, 3] = 1, (-1) * saha(T, Ne, UHeI,UHeII, Chi_HeI)
     coeff_matrix[4, 3], coeff_matrix[4, 4] = 1, (-1) * saha(T, Ne, UHeII, UHeIII, Chi_HeII )

@@ -1,7 +1,6 @@
 #!/usr/bin/python
-from libs.populations import *
-from libs.physlib import rossOpacity
-
+from numpy import pi
+from libs.physlib import *
 """
 
 Define derivatives of the quantities (RHS of the ODEs to be solved)
@@ -38,9 +37,9 @@ def conv_grad(r, T, Mr,muN):
     return  (-1.) * muN/R * (adgam-1.)/adgam * g
 
 
-def dT_r(r, Mr, T, L, rho, muN):
+def dT_r(r, Mr, T, L, rho, muN, k_r):
     """ Decide which transport mechanism dominates and apply the corresponding RHS """
-    radGrad = rad_grad(r, T, L, rho)
+    radGrad = rad_grad(r, T, L, rho, k_r)
     convGrad = conv_grad(r, T, Mr, muN)
 
     grad = is_radiative(radGrad, convGrad)

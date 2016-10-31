@@ -1,5 +1,7 @@
 #!/usr/bin/python
-from numpy import array, exp, log
+from numpy import array, exp, log10
+from libs.initcond import *
+from libs.setup import *
 from bisect import *
 from scipy.interpolate import interp2d
 
@@ -22,12 +24,12 @@ Chi_HeII   = 8.72E-11
 
 # Excitation energies and level degeneracies
 
-HIe       = [0,2.178E-11]
-HIdeg     = [2,8]
-HeIe      = [0,3.17E-11, 3.30E-11, 3.36E-11, 3.40E-11, 3.64E-11]
-HeIdeg    = [1,3,1,9,3,3]
-HeIIe     = [0, 6.54E-11, 7.75E-11, 8.17E-11, 8.33E-11, 8.48E-11]
-HeIIdeg     = [2, 8, 18, 32, 50 ]
+HIe       = array([0, 2.178E-11])
+HIdeg     = array([2, 8])
+HeIe      = array([0, 3.17E-11, 3.30E-11, 3.36E-11, 3.40E-11, 3.64E-11])
+HeIdeg    = array([1, 3,1,9,3,3])
+HeIIe     = array([0, 6.54E-11, 7.75E-11, 8.17E-11, 8.33E-11])
+HeIIdeg   = array([2, 8, 18, 32, 50 ])
 
 ######     Physical equations and transformations     #######
 
@@ -127,16 +129,29 @@ def partFunc(T,energ, degen):
 
     return sum(degen * exp(-energ/(k_b*T)))
 
-def rossOpacity(T, rho, mu):
-    T6 = T/(10E6)
-    lD = log(rho/T6)
-    lT = log(T)
+def rossOpacity(T, rho):
+    T6 = T/(1E6)
+    lD = log10(rho/T6**3)
+    lT = log10(T)
 
-    lowerT, lowerD = bisect_left(lT, opTab[:, 0]), bisect_left(lD, opTab[0, :])
-    upperT, upperD = bisect_right(lT, opTab[:, 0]), bisect_right(lD, opTab[0, :])
-    kappa1, kappa2 = opTab[lowerT, lowerD], opTab[upperT,upperD]
+    for ii in range(1,len(opTab[1,:])):
+            if opTab[1,ii]>lD:
+                x2 = ii
+                x1 = ii-1
+                if ii == len(opTab[1,:])-1:
+                    print 'crap'
+                break
+    for ii in range(1,len(opTab[:,1])):
+            if opTab[ii,1]>lT:
+                y2 = ii
+                y1 = ii-1
+                break
+    lowerD, upperD = opTab[1,x1], opTab[1, x2]
+    lowerT, upperT = opTab[y1,1], opTab[y2,1]
+    kappa1, kappa2 = opTab[y1,x1], opTab[y2,x2]
 
-    fit = interp2d([lowerT, upperT], [lowerD, upperD], [kappa1, kappa2], kind='linear')
-    val = fit(lT, lD)
 
+    delK = kappa2-kappa1
+    val = kappa1 + delK/(upperT-lowerT) * (lT-lowerT) + delK/(upperD-lowerD) * (lD-lowerD)
+    print kappa1, kappa2, val
     return val

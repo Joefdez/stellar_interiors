@@ -7,17 +7,26 @@ from numpy import array, genfromtxt
 
 def read_stddata(tfile):     #Standard data for all models and uses
 
-    data=genfromtxt(tfile)
-
+    data=[]
+    with open(tfile) as f:
+        for line in f:
+            li=line.strip()
+            if not li.startswith("#"):
+                data.append(li)
     return data[0], data[1], data[2], data[3], \
-            data[4], data[5], data[6]
+            data[4], data[5], data[6], data[7]
 
 
-def read_model_spefic(mod_name):   #Read model speficif information
+def read_model_spefic(model_name):   #Read model speficif information
 
-    if name == "solar_model":
-
-        data=genfromtxt(mod_name,dtype='str')
+    if model_name == 'sunmodel.dat':
+        #data=genfromtxt("sunmodel.dat",dtype='str')
+        data=[]
+        with open(model_name) as f:
+            for line in f:
+                li=line.strip()
+                if not li.startswith("#"):
+                    data.append(li)
 
     else:
         raise ValueError('Model not specified. Add it :)')

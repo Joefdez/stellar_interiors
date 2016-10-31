@@ -15,5 +15,3 @@ M_s, r_s = 1.989E30, 6.957E8
 """ Read in rosseland opacity table"""
 opTab = genfromtxt("rosseland.dat")
 print type(opTab)
-print opTab[0,:]
-print opTab[:,0]

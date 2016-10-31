@@ -1,8 +1,10 @@
 #!/usr/bin/python
-from numpy import array, empty
+from numpy import empty
+from rhs import calc_rhs
+from libs.initcond import *
+from libs.setup import *
 
-
-def RK4():
+def RK4(r, mu, k_r, hh, Mr, P, L, T):
 
     """
       4th order RK method for solution of 1st order linear equations.
@@ -16,13 +18,20 @@ def RK4():
             definition.
 
     """
-    num = len(y)-1
-    k1 = calc_rhs(r, Mr, P, L, T, rho, X, Y, mu)
-    k2 = calc_rhs(r + hh/2., Mr + hh/2.*k1[0], P + hh/2.*k1[1],
-                                   L + hh/2.*k1[2], T + hh/2.*k1[3], X, Y, mu)
-    k3 = calc_rhs(r + hh/2., Mr + hh/2.*k2[0], P + hh/2.*k2[1],
-                                   L + hh/2.*k2[2], T + hh/2.*k2[3], X, Y, mu)
-    k4 = calc_rhs(r + hh, Mr + hh*k3[0], P + hh*k3[1],
-                                   L + hh*k3[2], T + hh*k3[3], X, Y, mu)
 
-    return y + h/6. * (k1 + 2.*k2 + 2.*k3 + k4)
+
+    k1 = calc_rhs(r, Mr, P, L, T, X, Y, mu, k_r)
+    k2 = calc_rhs(r + hh/2., Mr + hh/2.*k1[0], P + hh/2.*k1[1],
+                                   L + hh/2.*k1[2], T + hh/2.*k1[3], X, Y, mu, k_r)
+    k3 = calc_rhs(r + hh/2., Mr + hh/2.*k2[0], P + hh/2.*k2[1],
+                                   L + hh/2.*k2[2], T + hh/2.*k2[3], X, Y, mu, k_r)
+    k4 = calc_rhs(r + hh, Mr + hh*k3[0], P + hh*k3[1],
+                                   L + hh*k3[2], T + hh*k3[3], X, Y, mu,  k_r)
+
+
+
+
+    return [Mr + hh/6. * (k1[0] + 2.*k2[0] + 2.*k3[0] + k4[0]),
+             P + hh/6. * (k1[1] + 2.*k2[1] + 2.*k3[1] + k4[1]),
+             L + hh/6. * (k1[2] + 2.*k2[2] + 2.*k3[2] + k4[2]),
+             T + hh/6. * (k1[3] + 2.*k2[3] + 2.*k3[3] + k4[3])]

@@ -12,6 +12,7 @@ without explicit declaration of the dependence.
 
 def dMr_r(r, rho):
     """ RHS of DE for enclosed mass at a given radius """
+    print 'r=',r,'rho=', rho
     return  4. * pi * rho * r**2
 
 
@@ -22,6 +23,7 @@ def dP_r(r, Mr, rho):
 
 def dL_r(r, T, rho, X):
     """ RHS of DE for luminosity  """
+    #print 'hello', r, T, rho, X
     return  4. * pi * rho * r**2 *  e_pp(T, rho, X)
 
 #Temperature gradient : needs to decide whether convective or radiative transport apply.

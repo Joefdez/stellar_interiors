@@ -10,12 +10,12 @@ from scipy.interpolate import interp2d
 R     = 8.3144598E7                     # Gas constant (erg K^-1 mol^-1)
 N_a   = 6.02214086E23                   # Avogradro's number
 sig   = 5.670373E-5                     # Stefan-Boltzmann constant (erg cm^-2 s^-1 K^-4
-m_H   = 1.67372E-30                     # Hydrogen mass (g)
-m_He  = 6.64647E-30                     # Helium mass (g)
+m_H   = 1.67372E-24                     # Hydrogen mass (g)
+m_He  = 6.64647E-24                     # Helium mass (g)
 G     = 6.67428E-8                      # Universal gravitational constant (cm^3 g^-1 s^-2=
 k_b   = 1.38064852E-16                  # Boltzmann constant (JK^-1
 adgam = 5./3.                           # Adiabatic coefficient for monoatomic gas
-
+m_u   = 1.661E-24                      # Atomic mass constantc
 # Ionization energies
 
 Chi_HI     = 2.18E-11
@@ -57,7 +57,7 @@ def dens(T, P, mu):
         Ideal gas equation. Input: temperature, pressure, mean molecular mass. Calculates gas density.
         This form of the equation is of most interest for integrating the equations of stellar structure.
     """
-    return (mu*P)/(R*T)
+    return (m_u*mu*P)/(k_b*T)
 
 def nn(T, P):
 
@@ -81,9 +81,9 @@ def Eg(T, pops, X, Y, Z):
        Ionitzation state. Input: Hydogren and helium fractions, metallicity. Calculates the ionization degree of
        the gas.
     """
-    etaHI = pops[1]/(pops[0]+pops[1])
-    etaHeI = pops[3]/(pops[2]+pops[3]+pops[4])
-    etaHeII = pops[4]/(pops[2]+pops[3]+pops[4])
+    etaHI = pops[1,0]/(pops[0,0]+pops[1,0])
+    etaHeI = pops[3,0]/(pops[2,0]+pops[3,0]+pops[4,0])
+    etaHeII = pops[4,0]/(pops[2,0]+pops[3,0]+pops[4,0])
     ionization_state = mu_0(X, Y, Z)*  ( etaHI * X + (etaHeI + 2*etaHeII) * Y/4. )
 
     return ionization_state
@@ -104,8 +104,8 @@ def mu(T, pops, X, Y, Z):
 
 def e_pp(T, rho, X):
 
-    T9 = T/(10E9)                  # Temperature in units of 10^9 K
-
+    T9 = T/(1E9)                  # Temperature in units of 10^9 K
+    print 'T9', T9
     return 2.53E4 * rho * X**2 *T9**(2./3.)*exp(-3.37 * T9**(-1./3.))
 
 # Convective transport / Radiative transport criteria
@@ -133,25 +133,28 @@ def rossOpacity(T, rho):
     T6 = T/(1E6)
     lD = log10(rho/T6**3)
     lT = log10(T)
+    print lD, lT
 
     for ii in range(1,len(opTab[1,:])):
-            if opTab[1,ii]>lD:
-                x2 = ii
-                x1 = ii-1
-                if ii == len(opTab[1,:])-1:
-                    print 'crap'
-                break
+        if opTab[0,ii]>lD:
+            d2 = opTab[0,ii]
+            d1 = opTab[0,ii-1]
+            break
     for ii in range(1,len(opTab[:,1])):
-            if opTab[ii,1]>lT:
-                y2 = ii
-                y1 = ii-1
-                break
-    lowerD, upperD = opTab[1,x1], opTab[1, x2]
-    lowerT, upperT = opTab[y1,1], opTab[y2,1]
-    kappa1, kappa2 = opTab[y1,x1], opTab[y2,x2]
+        if opTab[ii,0]>lT:
+            t2 = opTab[ii,0]
+            t1 = opTab[ii-1,0]
+            break
+    print d1, d2, t1, t2
 
+    k11, k12, k21, k22 = opTab[t1, d1], opTab[t1, d2],\
+                         opTab[t2, d1], opTab[t2, d2]
+    delT, delD = t2-t1, d2-d1
 
-    delK = kappa2-kappa1
-    val = kappa1 + delK/(upperT-lowerT) * (lT-lowerT) + delK/(upperD-lowerD) * (lD-lowerD)
-    print kappa1, kappa2, val
+    val = (d2-lD)/delD * ( (t2-lT)/delT * k11 + (lT-t1)/delT * k21) \
+        + (lD-d1)/delD * ( (t2-lT)/delT * k12 + (lT-t1)/delT * k22)
+
+    #delK = kappa2-kappa1
+    #val = kappa1 + delK/(upperT-lowerT) * (lT-lowerT) + delK/(upperD-lowerD) * (lD-lowerD)
+    print k11,k12,k21,k22, val
     return val

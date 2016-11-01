@@ -13,11 +13,13 @@ from libs.physlib import *
 
 def integrationSetup():#int_scheme, grid_points, r_s):
 
-    hh = r_s/grid_points
+
     if int_scheme == "RK4":
         if direction == "out->in":
+            hh = (-1.)*r_s/grid_points
             sgrid = linspace(r_s, 0, num=grid_points)
         elif direction == "in->out":
+            hh = r_s/grid_points
             sgrid = linspace(0, r_s, num=grid_points)
         solution = zeros([grid_points,5])             #Array container for solution
 
@@ -33,21 +35,25 @@ def solve(grid, hh, solution):
     global rho, Mr, P, L, T
     global pops
 
-    yy =[Mr, P, L, T]
+    #yy =[Mr, P, L, T]
 
     if int_scheme == "RK4":
-        for jj in range(1,int(grid_points)):
+        for jj in range(0,int(grid_points)):
             r = grid[jj]
-            pops = calc_pops(r, Mr, P, L, T, rho, X, Y)
+            pops = calc_pops(r, Mr, P, L, T, X, Y)
             mu_Now = mu(T, pops, X, Y, Z)
+            print 'mu_Now', mu_Now
+            rho = dens(T , P ,mu_Now)
+            print 'before->', rho, Mr, P, L, T
             k_r = rossOpacity(T, rho)
             next_step = RK4(r, mu_Now, k_r, hh, Mr, P, L, T)
-            rho = dens(next_step[3] ,next_step[1] ,mu_Now)
-            solution[jj, :] = append(next_step, array([rho]))
-            Mr, P, L, T = next_step[0], next_step[1]\
-                          , next_step[2], next_step[3]
-
-
+            #print 'next step ->', next_step
+            print 'Before->', rho, Mr, P, L, T
+            Mr, P, L, T = next_step[0], next_step[1] , next_step[2], next_step[3]
+            #print 'mu_Now', mu_Now
+            print 'After->', rho, Mr, P, L, T
+            raw_input("")
+            solution[jj, :] = Mr, P, L, T, rho
         return array[sgrid.transpose(), solution]
 
     else:

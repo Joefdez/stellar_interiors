@@ -44,7 +44,7 @@ def pop_iter(T, rho, X, Y, Ne0):
         #etaHI, etaHeI, etaHeII = pops[1] / (pops[0] + pops[1]
         #), pops[3] / (sum(pops[3:])), pops[4] / (sum(pops[3:]))
 
-        Ne1 = pops[1] + pops[3] + 2*pops[4]     #Number of electrons = that of totally ionized plasma
+        Ne1 = pops[0] + pops[1] + 2*pops[2]     #Number of electrons = that of totally ionized plasma
 
         delt = abs(Ne1-Ne0)/Ne0
 
@@ -66,29 +66,27 @@ def pop_TI(T, P, X, Ne):
     """
     Calculation of the ionic populations under the assumption that the plasma is totally ionized. Under this assumption,
     the electron density is given as the number density contributing half of the plasma pressure.
+    Totally ionized => N_HI=H_HeI=0 -> reduces the number of unknowns by 2
     """
 
-    UHI    = partFunc(T, HIe, HIdeg )
-    UHII   = 1
-    UHeI   = partFunc(T, HeIe, HeIdeg)
+    #UHI    = partFunc(T, HIe, HIdeg )
+    #UHII   = 1
+    #UHeI   = partFunc(T, HeIe, HeIdeg)
     UHeII  = partFunc(T, HeIIe, HeIIdeg)
     UHeIII = 1
 
     print 'Ne',Ne
 
-    coeff_matrix, indep_terms = zeros([5,5]), zeros([5,1])       #Equation coefficients matrix and independent terms vector
+    coeff_matrix, indep_terms = zeros([3,3]), zeros([3,1])       #Equation coefficients matrix and independent terms vector
 
     indep_terms[1, 0] = Ne
 
-    coeff_matrix[0, 0], coeff_matrix[0, 1], coeff_matrix[0, 2],\
-                            coeff_matrix[0, 3], coeff_matrix[0, 4] = 0.343, 0.343, -1 ,-1, -1
-    coeff_matrix[1, 1], coeff_matrix[1, 3], coeff_matrix[1, 4] = 1, 1, 2
-    coeff_matrix[2, 0], coeff_matrix[2, 0] = 1, (-1) * saha(T, Ne, UHI, UHII, Chi_HI )
-    coeff_matrix[3, 1], coeff_matrix[3, 2] = 1, (-1) * saha(T, Ne, UHeI,UHeII, Chi_HeI)
-    coeff_matrix[4, 2], coeff_matrix[4, 3] = 1, (-1) * saha(T, Ne, UHeII, UHeIII, Chi_HeII )
+    coeff_matrix[0, 0], coeff_matrix[0, 1], coeff_matrix[0, 2] =  0.343, -1, -1
+    coeff_matrix[1, 0], coeff_matrix[1, 1], coeff_matrix[1, 2] = 1, 1, 2
+    coeff_matrix[2, 1], coeff_matrix[2, 2] = 1, (-1) * saha(T, Ne, UHeII, UHeIII, Chi_HeII )
 
     pops = solve(coeff_matrix, indep_terms)
-    print 'POPS', Ne, (pops[1,0]+pops[3,0]+2*pops[4,0])
+    print 'pops', pops
     return pops
 
 #   etaHI, etaHeI, etaHeII = pops[1] / (pops[0] + pops[1]

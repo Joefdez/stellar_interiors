@@ -81,12 +81,20 @@ def Eg(T, pops, X, Y, Z):
        Ionitzation state. Input: Hydogren and helium fractions, metallicity. Calculates the ionization degree of
        the gas.
     """
-    etaHI = pops[1,0]/(pops[0,0]+pops[1,0])
-    etaHeI = pops[3,0]/(pops[2,0]+pops[3,0]+pops[4,0])
-    etaHeII = pops[4,0]/(pops[2,0]+pops[3,0]+pops[4,0])
-    ionization_state = mu_0(X, Y, Z)*  ( etaHI * X + (etaHeI + 2*etaHeII) * Y/4. )
+    if ptype == 'ti':
+        etaHI   = 1
+        etaHeI  = pops[1, 0]/(pops[1, 0] + pops[2, 0])
+        etaHeII = pops[2, 0]/(pops[1, 0] + pops[2, 0])      
+    else:
+    	etaHI = pops[1,0]/(pops[0,0]+pops[1,0])
+    	etaHeI = pops[3,0]/(pops[2,0]+pops[3,0]+pops[4,0])
+   	etaHeII = pops[4,0]/(pops[2,0]+pops[3,0]+pops[4,0])
+   
 
+
+    ionization_state = mu_0(X, Y, Z)*  ( etaHI * X + (etaHeI + 2*etaHeII) * Y/4. )
     return ionization_state
+
 
 
 # Mean molecular mass for gas with non-zero ionization
@@ -96,7 +104,7 @@ def mu(T, pops, X, Y, Z):
         Calculates the mean moleculare weight for a partially ionized gas.
     """
     E = Eg(T, pops, X, Y, Z)
-
+    print 'Eg, T',Eg, T
     return mu_0(X, Y, Z)/(1+E)
 
 
@@ -119,18 +127,22 @@ def is_radiative(rad_grad, conv_grad):
 
     response = conv_grad>rad_grad
     if response:
+    #   print 'radiative'
         return rad_grad
     else:
+    #   print 'covnective'
         return conv_grad
 
 
 def partFunc(T,energ, degen):
     """Calculates canonical partition function of a system, given the energy levels and degeneracies"""
-
+    #print sum(degen * exp(-energ/(k_b*T)))
     return sum(degen * exp(-energ/(k_b*T)))
 
 def rossOpacity(T, rho):
     T6 = T/(1E6)
+    print T, T6, rho
+    print rho/T6**3
     lD = log10(rho/T6**3)
     lT = log10(T)
     print lD, lT

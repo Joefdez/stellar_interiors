@@ -90,6 +90,8 @@ def Eg(T, pops, X, Y, Z):
     	etaHeI = pops[3,0]/(pops[2,0]+pops[3,0]+pops[4,0])
       	etaHeII = pops[4,0]/(pops[2,0]+pops[3,0]+pops[4,0])
 
+    print etaHI, etaHeI, etaHeII
+
 
 
     ionization_state = mu_0(X, Y, Z)*  ( etaHI * X + (etaHeI + 2.*etaHeII) * Y/4. )
@@ -105,6 +107,7 @@ def mu(T, pops, X, Y, Z):
     """
     E = Eg(T, pops, X, Y, Z)
     #print 'Eg, T',Eg, T
+    print mu_0(X,Y,Z), E, mu_0(X, Y, Z)/(1+E)
     return mu_0(X, Y, Z)/(1+E)
 
 
@@ -125,12 +128,12 @@ def is_radiative(rad_grad, conv_grad):
         dominates. Returns false if convective transport dominates.
     """
 
-    response = conv_grad>rad_grad
+    response = abs(conv_grad)>abs(rad_grad)
     if response:
-    #   print 'radiative'
+        print 'radiative'
         return rad_grad
     else:
-    #   print 'covnective'
+        print 'covnective'
         return conv_grad
 
 
@@ -168,5 +171,5 @@ def rossOpacity(T, rho):
 
     #delK = kappa2-kappa1
     #val = kappa1 + delK/(upperT-lowerT) * (lT-lowerT) + delK/(upperD-lowerD) * (lD-lowerD)
-    #print k11,k12,k21,k22, val
-    return val
+    print  val, 10**val
+    return 10**val

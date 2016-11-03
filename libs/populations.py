@@ -42,7 +42,7 @@ def pop_iter(T, rho, X, Y, Ne0):
         Ne1 = pops[0] + pops[1] + 2*pops[2]     #Number of electrons = that of totally ionized plasma
 
         delt = abs(Ne1-Ne0)/Ne0
-
+        #print 'delt', delt
         if delt > 0.001:
             Ne0 = (Ne0+Ne1)/2.    #-----> Replace with mean of the values
         else:
@@ -51,8 +51,8 @@ def pop_iter(T, rho, X, Y, Ne0):
         #En = Eg(T, etaHI, etaHeI, etaHeII, X, Y)
 
         #muNow= mu(T, pops[1], pops[3], pops[4])
-        print niter
-        return pops#, muNow
+    #rint niter
+    return pops#, muNow
 
 
 

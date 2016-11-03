@@ -19,8 +19,9 @@ def RK4(r, rho, mu, k_r, hh, Mr, P, L, T):
 
     """
     #print 'RK4 ->' , r, mu, k_r, hh, Mr, P, L, T, rho
-
+    print r
     k1 = hh * calc_rhs(r, rho, Mr, P, L, T, X, Y, mu, k_r)
+    #print k1[0]
     #print 'hh*k1', hh*k1
     k2 = hh * calc_rhs(r + hh/2., rho, Mr + 1/2.*k1[0], P + 1/2.*k1[1],
                                    L + 1/2.*k1[2], T + 1/2.*k1[3], X, Y, mu, k_r)

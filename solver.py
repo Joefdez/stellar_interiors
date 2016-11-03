@@ -39,21 +39,16 @@ def solve(grid, hh, solution, Mr, P, L, T, rho):
     #yy =[Mr, P, L, T]
 
     if int_scheme == "RK4":
-        for jj in range(0,int(grid_points)):
+        for jj in range(0,int(grid_points)-1):
             print jj
             r = grid[jj]
             pops = calc_pops(r, rho, Mr, P, L, T, X, Y, ptype='iterative')
-            #print 'T', T
+            print pops
             mu_Now = mu(T, pops, X, Y, Z)
-            #print 'mu_Now', mu_Now
-            #rho = dens(T , P ,mu_Now)
-            #print rho
-            print 'before->', r,  mu_Now, rho, Mr, P, L, T
             k_r = rossOpacity(T, rho)
-            #print 'Before->', rho, Mr, P, L, T
             Mr, P, L, T = RK4(r, rho, mu_Now, k_r, hh, Mr, P, L, T)
             rho = dens(T , P ,mu_Now)
-            print 'After->', r, mu_Now, rho, Mr, P, L, T
+            print 'After->', 'r\%=',r/r_s, 'mu=',mu_Now, 'rho=',rho,'m=', Mr/Mr_0,'P=', P, 'l=', L/L_0, 'T=',T
             raw_input("")
             solution[jj, :] = Mr, P, L, T, rho
         return array[sgrid.transpose(), solution]

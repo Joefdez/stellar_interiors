@@ -3,7 +3,7 @@ from libs.eqs import *
 from libs.physlib import *
 from libs.populations import *
 
-def calc_pops(r, rho, Mr, P, L, T, X, Y, ptype="ti", ne0=0):
+def calc_pops(r, rho, Mr, P, L, T, X, Y, ptype="ti"):
 
     if ptype == "ti":
         Ne = nn(T,P)/2.

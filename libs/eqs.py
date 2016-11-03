@@ -12,7 +12,7 @@ without explicit declaration of the dependence.
 
 def dMr_r(r, rho):
     """ RHS of DE for enclosed mass at a given radius """
-    print 'r=',r,'rho=', rho
+    #print 'r=',r,'rho=', rho
     return  4. * pi * rho * r**2
 
 
@@ -31,7 +31,7 @@ def dL_r(r, T, rho, X):
 def rad_grad(r, T, L, rho, k_r):
     """ RHS of DE for teperature if radiative transport dominates"""
 
-    return (3 * k_r * L * rho)/(64. * pi * sig) * 1./(r**2 * T**3)
+    return (-1.)*(3. * k_r * L * rho)/(64. * pi * sig) * 1./(r**2 * T**3)
 
 def conv_grad(r, T, Mr,muN):
     """ RHS of DE for temperature if the system is unstable against convective transport """

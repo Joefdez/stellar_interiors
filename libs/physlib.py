@@ -44,7 +44,7 @@ def saha(T,n_e,U,U_1,Ei):
 
     """
 
-    phi=2.07E-16*(U/U_1)*T**(-3/2)*exp(Ei/(k_b*T))     #Calculate Saha factor. (E_0-E)
+    phi=2.07E-16*(U/U_1)*T**(-3./2.)*exp(Ei/(k_b*T))     #Calculate Saha factor. (E_0-E)
 
     return n_e*phi                                     #Calculate population of ionization state.
 
@@ -82,17 +82,17 @@ def Eg(T, pops, X, Y, Z):
        the gas.
     """
     if ptype == 'ti':
-        etaHI   = 1
+        etaHI   = 1.
         etaHeI  = pops[1, 0]/(pops[1, 0] + pops[2, 0])
-        etaHeII = pops[2, 0]/(pops[1, 0] + pops[2, 0])      
+        etaHeII = pops[2, 0]/(pops[1, 0] + pops[2, 0])
     else:
     	etaHI = pops[1,0]/(pops[0,0]+pops[1,0])
     	etaHeI = pops[3,0]/(pops[2,0]+pops[3,0]+pops[4,0])
-   	etaHeII = pops[4,0]/(pops[2,0]+pops[3,0]+pops[4,0])
-   
+      	etaHeII = pops[4,0]/(pops[2,0]+pops[3,0]+pops[4,0])
 
 
-    ionization_state = mu_0(X, Y, Z)*  ( etaHI * X + (etaHeI + 2*etaHeII) * Y/4. )
+
+    ionization_state = mu_0(X, Y, Z)*  ( etaHI * X + (etaHeI + 2.*etaHeII) * Y/4. )
     return ionization_state
 
 
@@ -104,7 +104,7 @@ def mu(T, pops, X, Y, Z):
         Calculates the mean moleculare weight for a partially ionized gas.
     """
     E = Eg(T, pops, X, Y, Z)
-    print 'Eg, T',Eg, T
+    #print 'Eg, T',Eg, T
     return mu_0(X, Y, Z)/(1+E)
 
 
@@ -113,8 +113,8 @@ def mu(T, pops, X, Y, Z):
 def e_pp(T, rho, X):
 
     T9 = T/(1E9)                  # Temperature in units of 10^9 K
-    print 'T9', T9
-    return 2.53E4 * rho * X**2 *T9**(2./3.)*exp(-3.37 * T9**(-1./3.))
+    #print 'T9', T9
+    return 2.53E4 * rho * X**2 *T9**(-2./3.)*exp(-3.37 * T9**(-1./3.))
 
 # Convective transport / Radiative transport criteria
 
@@ -141,11 +141,11 @@ def partFunc(T,energ, degen):
 
 def rossOpacity(T, rho):
     T6 = T/(1E6)
-    print T, T6, rho
-    print rho/T6**3
+    #print T, T6, rho
+    #print rho/T6**3
     lD = log10(rho/T6**3)
     lT = log10(T)
-    print lD, lT
+    #print lD, lT
 
     for ii in range(1,len(opTab[1,:])):
         if opTab[0,ii]>lD:
@@ -157,7 +157,7 @@ def rossOpacity(T, rho):
             t2 = opTab[ii,0]
             t1 = opTab[ii-1,0]
             break
-    print d1, d2, t1, t2
+    #print d1, d2, t1, t2
 
     k11, k12, k21, k22 = opTab[t1, d1], opTab[t1, d2],\
                          opTab[t2, d1], opTab[t2, d2]
@@ -168,5 +168,5 @@ def rossOpacity(T, rho):
 
     #delK = kappa2-kappa1
     #val = kappa1 + delK/(upperT-lowerT) * (lT-lowerT) + delK/(upperD-lowerD) * (lD-lowerD)
-    print k11,k12,k21,k22, val
+    #print k11,k12,k21,k22, val
     return val

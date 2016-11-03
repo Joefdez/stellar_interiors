@@ -31,24 +31,19 @@ def pop_iter(T, rho, X, Y, Ne0):
         niter += 1
 
 
-        coeff_matrix[0, 0], coeff_matrix[0, 1] = 1, 1                # Fill in coefficients matrix
-        coeff_matrix[1, 2], coeff_matrix[1, 3], coeff_matrix[2, 5] = 1, 1, 1
+        coeff_matrix[0, 0], coeff_matrix[0, 1]  = 1, 1
+        coeff_matrix[1, 2], coeff_matrix[1, 3], coeff_matrix[1, 4] = 1, 1, 1
         coeff_matrix[2, 0], coeff_matrix[2, 1] = 1, (-1) * saha(T, Ne, UHI, UHII, Chi_HI )
         coeff_matrix[3, 2], coeff_matrix[3, 3] = 1, (-1) * saha(T, Ne, UHeI,UHeII, Chi_HeI)
         coeff_matrix[4, 3], coeff_matrix[4, 4] = 1, (-1) * saha(T, Ne, UHeII, UHeIII, Chi_HeII )
 
-
-
         pops = solve(coeff_matrix, indep_terms)
-
-        #etaHI, etaHeI, etaHeII = pops[1] / (pops[0] + pops[1]
-        #), pops[3] / (sum(pops[3:])), pops[4] / (sum(pops[3:]))
 
         Ne1 = pops[0] + pops[1] + 2*pops[2]     #Number of electrons = that of totally ionized plasma
 
         delt = abs(Ne1-Ne0)/Ne0
 
-        if delt > 0.05:
+        if delt > 0.001:
             Ne0 = (Ne0+Ne1)/2.    #-----> Replace with mean of the values
         else:
             cont_iter = False    # If convergence is acheived, break the look
@@ -56,12 +51,12 @@ def pop_iter(T, rho, X, Y, Ne0):
         #En = Eg(T, etaHI, etaHeI, etaHeII, X, Y)
 
         #muNow= mu(T, pops[1], pops[3], pops[4])
-
+        print niter
         return pops#, muNow
 
 
 
-def pop_TI(T, P, X, Ne):
+def pop_TI(T, P, rho, X, Y, Ne):
 
     """
     Calculation of the ionic populations under the assumption that the plasma is totally ionized. Under this assumption,
@@ -72,21 +67,22 @@ def pop_TI(T, P, X, Ne):
     #UHI    = partFunc(T, HIe, HIdeg )
     #UHII   = 1
     #UHeI   = partFunc(T, HeIe, HeIdeg)
-    UHeII  = partFunc(T, HeIIe, HeIIdeg)
-    UHeIII = 1
+    #UHeII  = partFunc(T, HeIIe, HeIIdeg)
+    #UHeIII = 1
 
-    print 'Ne',Ne
+    #print 'Ne',Ne
 
     coeff_matrix, indep_terms = zeros([3,3]), zeros([3,1])       #Equation coefficients matrix and independent terms vector
 
-    indep_terms[1, 0] = Ne
+    indep_terms[0, 0], indep_terms[1, 0], indep_terms[2, 0] = rho * X / m_H,  rho * Y / m_He, Ne
 
-    coeff_matrix[0, 0], coeff_matrix[0, 1], coeff_matrix[0, 2] =  0.343, -1, -1
-    coeff_matrix[1, 0], coeff_matrix[1, 1], coeff_matrix[1, 2] = 1, 1, 2
-    coeff_matrix[2, 1], coeff_matrix[2, 2] = 1, (-1) * saha(T, Ne, UHeII, UHeIII, Chi_HeII )
+    coeff_matrix[0, 0] = 1
+    coeff_matrix[1, 1], coeff_matrix[1, 2] =  1, 1
+    coeff_matrix[2, 0], coeff_matrix[2, 1], coeff_matrix[2, 2] = 1., 1., 2.
+    #coeff_matrix[2, 1], coeff_matrix[2, 2] = 1., (-1.) * saha(T, Ne, UHeII, UHeIII, Chi_HeII )
 
     pops = solve(coeff_matrix, indep_terms)
-    print 'pops', pops
+    #print 'pops', pops
     return pops
 
 #   etaHI, etaHeI, etaHeII = pops[1] / (pops[0] + pops[1]

@@ -16,3 +16,8 @@ Good sources for properties of the sun:
 
     http://solar-center.stanford.edu/vitalstats.html
     http://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
+
+
+Physical constants and astronomical data:
+
+    http://www.astro.wisc.edu/~dolan/constants.html
